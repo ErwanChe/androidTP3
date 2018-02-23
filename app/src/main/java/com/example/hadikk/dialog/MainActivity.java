@@ -1,6 +1,8 @@
 package com.example.hadikk.dialog;
 
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.DialogPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         button = findViewById(R.id.button);
+        openHelper = new NotesOpenHelper(this);
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("OUI","J'ai cliqué OUI" + et.getText().toString());
                         NameAdapter nameAdapter = (NameAdapter) rcview.getAdapter();
                         nameAdapter.add(et.getText().toString());
+
+                        // =============================================
+
+                        SQLiteDatabase database = openHelper.getReadableDatabase();
+                        Cursor cursor = database.rawQuery("SELECT * FROM todo",null);
+                        int idIndex = cursor.getColumnIndex("id");
+                        int nameIndex = cursor.getColumnIndex("name");
+
+                        while(cursor.moveToNext())
+                        {
+                            int id = cursor.getInt(idIndex);
+                            String name = cursor.getString(nameIndex);
+                            Log.d("MainActivity","id = "+ id + " name = "+name);
+                        }
                     }
                 });
 
